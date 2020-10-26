@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'food'
+      MYSQL_USER: 'user_food'
+      MYSQL_PASSWORD: 'password_food'
+      MYSQL_ROOT_PASSWORD: 'password_food'
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-h", "127.0.0.1", "-u", "root", "-ppassword_food", "status"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
+    stdin_open: true
+    tty: true
+    volumes:
+      - food_data:/var/lib/postgresql/data
+
+volumes:
+  food_data: {}
