@@ -5,6 +5,7 @@ import * as express from 'express';
 import * as http from 'http';
 
 import logger from './logger';
+import * as database from '@src/database';
 
 export class SetupServer extends Server {
   private server?: http.Server;
@@ -15,6 +16,12 @@ export class SetupServer extends Server {
 
   public async init(): Promise<void> {
     this.setupExpress();
+
+    await this.databaseSetup();
+  }
+
+  private async databaseSetup(): Promise<void> {
+    await database.connect();
   }
 
   private setupExpress(): void {
@@ -26,6 +33,8 @@ export class SetupServer extends Server {
   }
 
   public async close(): Promise<void> {
+    await database.close();
+    
     if (this.server) {
       await new Promise((resolve, reject) => {
         this.server?.close((err) => {
