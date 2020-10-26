@@ -6,6 +6,7 @@ import * as http from 'http';
 
 import logger from './logger';
 import * as database from '@src/database';
+import { apiErrorValidator } from './middlewares/api-error-validator';
 
 export class SetupServer extends Server {
   private server?: http.Server;
@@ -18,6 +19,9 @@ export class SetupServer extends Server {
     this.setupExpress();
 
     await this.databaseSetup();
+
+    // must be the last
+    this.setupErrorHandlers();
   }
 
   private async databaseSetup(): Promise<void> {
@@ -28,13 +32,17 @@ export class SetupServer extends Server {
     this.app.use(express.json());
   }
 
+  private setupErrorHandlers(): void {
+    this.app.use(apiErrorValidator);
+  }
+
   public getApp(): express.Application {
     return this.app;
   }
 
   public async close(): Promise<void> {
     await database.close();
-    
+
     if (this.server) {
       await new Promise((resolve, reject) => {
         this.server?.close((err) => {
