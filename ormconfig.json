@@ -3,9 +3,9 @@
     "host": "localhost",
     "port": 3306,
     "username": "root",
-    "password": "root",
+    "password": "password_food",
     "database": "food",
     "synchronize": true,
     "logging": false,
-    "entities": ["src/entities/**/*.ts", "dist/entities/**/*.js"]
+    "entities": ["src/entities/*.ts", "dist/entities/*.js"]
  }
